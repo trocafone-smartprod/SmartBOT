@@ -54,4 +54,7 @@ class Application
             );
         return $this->discord;
     }
+    public function getEnvCIPath($env = 'PRODUCTION'){
+        return @$_ENV[$env."_CI_PATH"];
+    }
 }

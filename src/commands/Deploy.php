@@ -2,6 +2,7 @@
 namespace App\Commands;
 
 use App\Traits\CommandInterface;
+use App\Traits\CommandTrait;
 use Composer\Console\Application as ConsoleApplication;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\StreamOutput;
@@ -9,6 +10,7 @@ use Throwable;
 
 class Deploy implements CommandInterface
 {
+    use CommandTrait;
     public static $name = "Deploy";
     public static $subCommands = [];
     /**
@@ -20,20 +22,28 @@ class Deploy implements CommandInterface
      */
     public function handle($message, $params)
     {
+        $env = strtoupper($params[0] ??= 'production');
+        $ci_path = $this->app->getEnvCIPath($env);
+        if (!in_array($env, explode(",", $_ENV['ALLOWED_ENVS'])) ) {
+            return "Ambiente não permitido.";
+        }
+        if (!$ci_path) {
+            return "Não há o diretório para esse ambiente cadastro no .env";
+        }
         try{
             $message->channel->sendMessage(
                 "", false,
                 $this->embed(
-                    "Composer Install - Codeigniter", 
-                    $this->composerInstall($_ENV["CI_PATH"])
+                    "Composer Install - CodeIgniter", 
+                    $this->composerInstall($ci_path)
                 ) 
             )->then(
-                function () use ($message) {
+                function () use ($message, $ci_path) {
                     $message->channel->sendMessage(
                         "", false,
                         $this->embed(
                             "Phinx - CodeIgniter", 
-                            $this->runCommand("php {$_ENV["CI_PATH"]}/vendor/robmorgan/phinx/bin/phinx migrate --configuration=".realpath("{$_ENV["CI_PATH"]}/phinx.php"))
+                            $this->runCommand("php {$ci_path}/vendor/robmorgan/phinx/bin/phinx migrate --configuration=".realpath("{$ci_path}/phinx.php"))
                         )
                     );
                 }
@@ -42,23 +52,26 @@ class Deploy implements CommandInterface
                 "", false,
                 $this->embed(
                     "Composer Install - Lumen", 
-                    $this->composerInstall($_ENV["CI_PATH"] . "\a")
+                    $this->composerInstall($ci_path . "\a")
                 ) 
             )->then(
-                function () use ($message) {
+                function () use ($message, $ci_path) {
                     $message->channel->sendMessage(
                         "", false,
                         $this->embed(
                             "Artisan Migrate - Lumen", 
-                            $this->runCommand("php {$_ENV["CI_PATH"]}/a/artisan migrate")
+                            $this->runCommand("php {$ci_path}/a/artisan migrate")
                         )
-                    );
-                    $message->channel->sendMessage(
-                        "", false,
-                        $this->embed(
-                            "Scout Mysql - Lumen", 
-                            $this->runCommand("php {$_ENV["CI_PATH"]}/a/artisan scout:mysql-index")
-                        )
+                    )->then(
+                        function () use ($message, $ci_path) {
+                            $message->channel->sendMessage(
+                                "", false,
+                                $this->embed(
+                                    "Scout Mysql - Lumen", 
+                                    $this->runCommand("php {$ci_path}/a/artisan scout:mysql-index")
+                                )
+                            );
+                        }
                     );
                 }
             );

@@ -1,8 +1,12 @@
 <?php
 namespace App\Traits;
 
-trait CommmandTrait
+trait CommandTrait
 {
-    public static $name;
-    public static $subCommands;
+    /** @var App\Application */
+    protected $app;
+    public function __construct()
+    {
+        $this->app = $GLOBALS['app'];
+    }
 }
