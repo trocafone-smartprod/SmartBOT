@@ -52,7 +52,7 @@ class Deploy implements CommandInterface
                 "", false,
                 $this->embed(
                     "Composer Install - Lumen", 
-                    $this->composerInstall($ci_path . "\a")
+                    $this->composerInstall($ci_path . "/a")
                 ) 
             )->then(
                 function () use ($message, $ci_path) {
