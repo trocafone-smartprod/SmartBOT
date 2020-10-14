@@ -60,7 +60,7 @@ class Deploy implements CommandInterface
                         "", false,
                         $this->embed(
                             "Artisan Migrate - Lumen", 
-                            $this->runCommand("php {$ci_path}/a/artisan migrate")
+                            $this->runCommand("php {$ci_path}/a/artisan migrate --force")
                         )
                     )->then(
                         function () use ($message, $ci_path) {
