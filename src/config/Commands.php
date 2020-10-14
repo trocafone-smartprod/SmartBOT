@@ -2,6 +2,7 @@
 
 namespace App\Config;
 
+use App\Commands\Deploy;
 use App\Commands\Phpunit;
 use App\Commands\Ping;
 
@@ -15,6 +16,7 @@ class Commands
     public static $commands = [
         Ping::class,
         Phpunit::class,
+        Deploy::class
     ];
     protected $app;
     protected $discord;
