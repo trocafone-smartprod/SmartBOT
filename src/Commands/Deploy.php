@@ -34,42 +34,61 @@ class Deploy implements CommandInterface
             $message->channel->sendMessage(
                 "", false,
                 $this->embed(
-                    "Composer Install - CodeIgniter", 
-                    $this->composerInstall($ci_path)
+                    "GitHub - Pull changes", 
+                    $this->composerInstall("git --git-dir=\"{$ci_path}/.git\" --work-tree=\"{$ci_path}\" pull")
                 ) 
             )->then(
-                function () use ($message, $ci_path) {
+                function() use ($message, $ci_path) {
                     $message->channel->sendMessage(
                         "", false,
                         $this->embed(
-                            "Phinx - CodeIgniter", 
-                            $this->runCommand("php {$ci_path}/vendor/robmorgan/phinx/bin/phinx migrate --configuration=".realpath("{$ci_path}/phinx.php"))
-                        )
-                    );
-                }
-            );
-            $message->channel->sendMessage(
-                "", false,
-                $this->embed(
-                    "Composer Install - Lumen", 
-                    $this->composerInstall($ci_path . "/a")
-                ) 
-            )->then(
-                function () use ($message, $ci_path) {
-                    $message->channel->sendMessage(
-                        "", false,
-                        $this->embed(
-                            "Artisan Migrate - Lumen", 
-                            $this->runCommand("php {$ci_path}/a/artisan migrate --force")
-                        )
+                            "Composer Install - CodeIgniter", 
+                            $this->composerInstall($ci_path)
+                        ) 
                     )->then(
                         function () use ($message, $ci_path) {
                             $message->channel->sendMessage(
                                 "", false,
                                 $this->embed(
-                                    "Scout Mysql - Lumen", 
-                                    $this->runCommand("php {$ci_path}/a/artisan scout:mysql-index")
+                                    "Phinx - CodeIgniter", 
+                                    $this->runCommand("php {$ci_path}/vendor/robmorgan/phinx/bin/phinx migrate --configuration=".realpath("{$ci_path}/phinx.php"))
                                 )
+                            );
+                        }
+                    );
+                    $message->channel->sendMessage(
+                        "", false,
+                        $this->embed(
+                            "Composer Install - Lumen", 
+                            $this->composerInstall($ci_path . "/a")
+                        ) 
+                    )->then(
+                        function () use ($message, $ci_path) {
+                            $message->channel->sendMessage(
+                                "", false,
+                                $this->embed(
+                                    "Artisan Migrate - Lumen", 
+                                    $this->runCommand("php {$ci_path}/a/artisan migrate --force")
+                                )
+                            )->then(
+                                function () use ($message, $ci_path) {
+                                    $message->channel->sendMessage(
+                                        "", false,
+                                        $this->embed(
+                                            "Scout Mysql - Lumen", 
+                                            $this->runCommand("php {$ci_path}/a/artisan scout:mysql-index")
+                                        )
+                                    )->then(
+                                        function () use ($message, $ci_path) {
+                                            $message->channel->sendMessage(
+                                                "", false,
+                                                $this->embed(
+                                                    "Clear cache - Lighthouse GraphQL", 
+                                                    $this->runCommand("php {$ci_path}/a/artisan lighthouse:clear-cache")
+                                            );
+                                        }
+                                    );
+                                }
                             );
                         }
                     );
