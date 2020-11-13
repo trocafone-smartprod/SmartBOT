@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\StreamOutput;
 use Throwable;
 
-class Deploy implements CommandInterface
+class  Deploy implements CommandInterface
 {
     use CommandTrait;
     public static $name = "Deploy";
@@ -85,6 +85,7 @@ class Deploy implements CommandInterface
                                                 $this->embed(
                                                     "Clear cache - Lighthouse GraphQL", 
                                                     $this->runCommand("php {$ci_path}/a/artisan lighthouse:clear-cache")
+                                                )
                                             );
                                         }
                                     );
