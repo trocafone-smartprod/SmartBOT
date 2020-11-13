@@ -35,7 +35,7 @@ class Deploy implements CommandInterface
                 "", false,
                 $this->embed(
                     "GitHub - Pull changes", 
-                    $this->composerInstall("git --git-dir=\"{$ci_path}/.git\" --work-tree=\"{$ci_path}\" pull")
+                    $this->runCommand("git --git-dir=\"{$ci_path}/.git\" --work-tree=\"{$ci_path}\" pull")
                 ) 
             )->then(
                 function() use ($message, $ci_path) {
