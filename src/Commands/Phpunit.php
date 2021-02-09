@@ -9,7 +9,7 @@ class Phpunit implements CommandInterface
     public static $subCommands = [];
     public function handle($message, $params)
     {
-        $command =  "php {$_ENV['PHPUNIT_PATH']} --configuration {$_ENV['PHPUNITCONFIG_PATH']} {$_ENV['PHPUNIT_PARAMS']}";
+        $command =  "php {$_ENV['DEV_CI_PATH']}/a/migrate --env=testing && php {$_ENV['PHPUNIT_PATH']} --configuration {$_ENV['PHPUNITCONFIG_PATH']} {$_ENV['PHPUNIT_PARAMS']}";
         $handle = popen($command, 'r');
         $read = '';
         while(!feof($handle)){
